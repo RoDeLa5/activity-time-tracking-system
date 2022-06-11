@@ -24,30 +24,30 @@
 
         <form id="login" method = "POST" action="/polls/login/" class="input-group">
             {% csrf_token %}
-            <input type="number" min="10101" max="31999" class="input-field" name = "studentid" 
-            id="studentid" placeholder="학번" required>
-            <input type="password" class="input-field" name = "password" 
+            <input type="number" min="10101" max="31999" class="input-field"
+            name="studentid" id="studentid" placeholder="학번" required>
+            <input type="password" class="input-field" name="password" 
             id="password" placeholder="비밀번호" required>
             {% if error %}
-            <p style="margin-top: 15px; font-size:15px;">{{ error }}</p>
+            <p class="error">{{ error }}</p>
             {% endif %}
-            <input type='submit' class="submit" value="로그인">
+            <input type="submit" class="submit" value="로그인">
         </form>
 
         <form id="register" method = "POST" action="/polls/register/" class="input-group">
             {% csrf_token %}
-            <input type="number" min="10101" max="31999" class="input-field" name = "studentid" 
-            id="studentid-register" placeholder="학번" required>
-            <input type="text" class="input-field" name = "name" 
+            <input type="number" min="10101" max="31999" class="input-field" 
+            name="studentid" id="studentid-register" placeholder="학번" required>
+            <input type="text" class="input-field" name="name" 
             id="name" placeholder="이름" required>
-            <input type="password" class="input-field" name = "password" 
+            <input type="password" class="input-field" name="password" 
             id="password-register" placeholder="비밀번호" required>
-            <input type="password" class="input-field" name = "re_password"
+            <input type="password" class="input-field" name="re_password"
             id="re_password" placeholder="비밀번호 확인" required>
             {% if error2 %}
-            <p style="margin-top: 15px; font-size:15px;">{{ error2 }}</p>
+            <p class="error">{{ error2 }}</p>
             {% endif %}
-            <input type='submit' class="submit" value="회원가입">
+            <input type="submit" class="submit" value="회원가입">
         </form>
     </div>
 </div>

@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-# Create your views here.
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.hashers import make_password, check_password
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Activity, Apply, User, Plan
@@ -104,16 +102,19 @@ def register(request):
         password = request.POST['password']
         re_password = request.POST['re_password']
         res_data = {}
+        # Check if the request is valid
         if not (studentid and name and password and re_password):
             res_data['error2'] = "모든 값을 입력해야 합니다."
         elif not (studentid.isdigit() and (10100 < int(studentid) < 32000)):
             res_data['error2'] = "유효하지 않은 학번입니다."
-        elif User.objects.filter(studentid = studentid).exists():
+        elif User.objects.filter(studentid=studentid).exists():
             res_data['error2'] = '해당 학번의 사용자가 이미 존재합니다.'
         elif password != re_password:
             res_data['error2'] = '비밀번호가 다릅니다.'
         else:
-            user = User(studentid=studentid, name=name, password=make_password(password))
+            # Register new user
+            user = User(studentid=studentid, name=name,
+                        password=make_password(password))
             user.save()
         return render(request, 'login.html', res_data)
 
