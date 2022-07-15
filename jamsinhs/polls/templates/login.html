@@ -69,4 +69,10 @@
         z.style.left = "165px";
     }
 </script>
+
+<!-- Show register page directly on error (#3) -->
+{% if error2 %}
+    <script>register()</script>
+{% endif %}
+
 {% endblock %}
