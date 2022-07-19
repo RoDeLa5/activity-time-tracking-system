@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-# Create your views here.
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.hashers import make_password, check_password
-from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Activity, Apply, User, Plan
@@ -104,29 +102,32 @@ def register(request):
         password = request.POST['password']
         re_password = request.POST['re_password']
         res_data = {}
+        # Check if the request is valid
         if not (studentid and name and password and re_password):
             res_data['error2'] = "모든 값을 입력해야 합니다."
-        if password != re_password:
+        elif not (studentid.isdigit() and (10100 < int(studentid) < 32000)):
+            res_data['error2'] = "유효하지 않은 학번입니다."
+        elif User.objects.filter(studentid=studentid).exists():
+            res_data['error2'] = '해당 학번의 사용자가 이미 존재합니다.'
+        elif password != re_password:
             res_data['error2'] = '비밀번호가 다릅니다.'
         else:
-            try:
-                user = User(studentid=studentid, name=name,
-                            password=make_password(password))
-                user.save()
-            except IntegrityError:
-                res_data['error2'] = '해당 학번의 사용자가 이미 존재합니다.'
+            # Register new user
+            user = User(studentid=studentid, name=name,
+                        password=make_password(password))
+            user.save()
         return render(request, 'login.html', res_data)
 
 
 def login(request):
-    response_data = {}
+    res_data = {}
     if request.method == "GET":
         return render(request, 'login.html')
     elif request.method == "POST":
         login_studentid = request.POST['studentid']
         login_password = request.POST['password']
         if not (login_studentid and login_password):
-            response_data['error'] = "아이디와 비밀번호를 모두 입력해야 합니다."
+            res_data['error'] = "아이디와 비밀번호를 모두 입력해야 합니다."
         else:
             try:
                 user = User.objects.get(studentid=login_studentid)
@@ -134,10 +135,10 @@ def login(request):
                     request.session['user'] = user.id
                     return redirect('/polls/')
                 else:
-                    response_data['error'] = "비밀번호가 틀렸습니다."
+                    res_data['error'] = "비밀번호가 틀렸습니다."
             except ObjectDoesNotExist:
-                response_data['error'] = "회원가입 되지 않은 학번입니다"
-        return render(request, 'login.html', response_data)
+                res_data['error'] = "회원가입 되지 않은 학번입니다"
+        return render(request, 'login.html', res_data)
 
 
 def logout(request):
